@@ -30,6 +30,29 @@ const boxPrimitive = Primitive.createCube(boxMaterial);
 // We create a scenegraph Node to represent the player in the world.
 const player = new Node(scene); // We pass scene as an argument to make the player a child of the scene node.
 
+
+//playerHealth
+let UI = {
+    healthBar: document.getElementById("health"),
+}
+let health = 3;
+let boxDamage = -1;
+let gameOver = false;
+
+let changeHealth = function (value){
+    let newValue = health + value;
+    health = Math.max(0, newValue);
+    UI.healthBar.innerHTML = health.toString();
+
+    if(health == 0){
+        //die
+        document.getElementById("gameOver").hidden = false;
+        move.mode = 1;
+        gameOver = true;
+        setMoveMode1();
+    }
+}
+
 const light = new Light({
     diffuse: vec4.fromValues(134/255, 31/255, 42/255, 1.0),
     specular: vec4.fromValues(0.4, 0.4, 0.4, 1.0)
@@ -61,6 +84,8 @@ playerCollisionObject.setOnIntersectListener((delta, entity) => {
 
     // and destroy the collision object.
     entity.destroy();
+
+    changeHealth(boxDamage);//playerHealth
 });
 
 physicsManager.add(playerCollisionObject);
@@ -131,17 +156,16 @@ window.addEventListener('keydown', (e) => {
 
     if (e.code === 'KeyF') {
 
+
+        if(gameOver) return;
+
         // Toggle move mode.
         move.mode = (move.mode + 1) % 2;
 
         // Depending on the mode we swiched to we may have to do some stuff.
         if (move.mode === 1) {
 
-            player.remove(moveNode);
-            scene.add(moveNode);
-
-            moveNode.setTranslation(player.translation[0], player.translation[1] + 4, player.translation[2] + 8);
-
+            setMoveMode1();
         } else {
 
             // reset moveNode translation and camera rotation.
@@ -158,6 +182,12 @@ window.addEventListener('keydown', (e) => {
         }
     }
 });
+let setMoveMode1 = function() {
+    player.remove(moveNode);
+    scene.add(moveNode);
+
+    moveNode.setTranslation(player.translation[0], player.translation[1] + 4, player.translation[2] + 8);
+}
 
 window.addEventListener('keydown', (e) => {
     e.preventDefault();
