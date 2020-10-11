@@ -71,6 +71,8 @@ export default class ObstacleManager {
 
                 }
 
+                populated[(y * sizeX) + x] = true;
+
                 let block = new Mesh([this.boxPrimitive]);
                 block.setTranslation(x - (sizeX / 2) + 0.5, 0, (y - (sizeY - 0.5)) + offset);
                 this.scene.add(block);
@@ -122,6 +124,7 @@ export default class ObstacleManager {
             this.nextChunk = this.generateChunk(offset);
 
         }
+
 
         this.offset = offset;
     }
